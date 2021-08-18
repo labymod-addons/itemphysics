@@ -26,7 +26,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("net.labymod.gradle", "addon", "0.1.1")
+        classpath("net.labymod.gradle", "addon", "0.1.2")
     }
 }
 
@@ -38,7 +38,6 @@ subprojects {
     plugins.apply("net.labymod.gradle.addon")
 
     repositories {
-        mavenLocal()
 
         var bearerToken = System.getenv("LABYMOD_BEARER_TOKEN")
 
