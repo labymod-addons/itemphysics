@@ -26,7 +26,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("net.labymod.gradle", "addon", "0.1.2")
+        classpath("net.labymod.gradle", "addon", "0.1.3")
     }
 }
 
