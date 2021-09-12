@@ -8,10 +8,5 @@ repositories {
 
 dependencies {
     laby.addonProcessor()
-    laby.core()
-    api(project(":api"))
-}
-
-addon {
-    internalRelease()
+    laby.api()
 }
