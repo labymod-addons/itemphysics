@@ -10,7 +10,7 @@ minecraft {
     runs {
         client() {
             mainClass("net.minecraft.launchwrapper.Launch")
-            args("--tweakClass", "net.labymod.core.vanilla.LabyModTweaker")
+            args("--tweakClass", "net.labymod.core.loader.launch.LabyModTweaker")
             args("--labymod-dev-environment", "true")
             args("--addon-dev-environment", "true")
         }
