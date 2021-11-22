@@ -7,8 +7,7 @@ repositories {
 }
 
 dependencies {
-    laby.addonProcessor()
-    laby.api()
+    labyApi("api")
 }
 
 tasks.compileJava {

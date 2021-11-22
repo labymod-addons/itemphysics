@@ -26,12 +26,15 @@ buildscript {
     }
 
     dependencies {
-        classpath("net.labymod.gradle", "addon", "0.1.9")
+        classpath("net.labymod.gradle", "addon", "0.1.19")
     }
 }
 
 group = "org.example"
 version = "1.0.0"
+
+plugins.apply("net.labymod.gradle.addon")
+
 
 subprojects {
     plugins.apply("java-library")
@@ -40,5 +43,17 @@ subprojects {
     repositories {
         maven("https://libraries.minecraft.net/")
         maven("https://repo.spongepowered.org/repository/maven-public/")
+        mavenLocal()
     }
+}
+
+addon {
+    addonInfo {
+        id("example")
+        displayName("Example Addon")
+        author("Example Author")
+        version(System.getenv().getOrDefault("VERSION", "0.0.0"))
+    }
+
+    internalRelease()
 }

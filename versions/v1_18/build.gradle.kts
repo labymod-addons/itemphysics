@@ -2,7 +2,7 @@ plugins {
     id("org.spongepowered.gradle.vanilla")
     id("net.labymod.gradle.mixin")
 }
-val minecraftGameVersion = "1.17.1"
+val minecraftGameVersion = "1.18-pre5"
 
 version = "1.0.0"
 
@@ -21,15 +21,15 @@ minecraft {
 
 dependencies {
     labyProcessor()
-    labyApi("v1_17")
+    labyApi("v1_18")
     api(project(":core"))
 }
 
 mixin {
-    compatibilityLevel("JAVA_16")
+    compatibilityLevel("JAVA_17")
     minVersion("0.8.2")
 
-    packageName("org.example.addons.v1_17.mixins")
+    packageName("org.example.addons.v1_18.mixins")
 
     version(minecraftGameVersion)
 }
