@@ -15,6 +15,7 @@ minecraft {
             args("--tweakClass", "net.labymod.core.loader.vanilla.launchwrapper.LabyModLaunchWrapperTweaker")
             args("--labymod-dev-environment", "true")
             args("--addon-dev-environment", "true")
+            jvmArgs("-Dmixin.debug=true")
         }
     }
 }
@@ -29,7 +30,7 @@ mixin {
     compatibilityLevel("JAVA_16")
     minVersion("0.8.2")
 
-    packageName("org.example.addons.v1_17.mixins")
+    packageName("org.example.addon.v1_17.mixins")
 
     version(minecraftGameVersion)
 }
