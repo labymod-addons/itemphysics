@@ -3,7 +3,8 @@ plugins {
 	id("net.labymod.gradle.mixin")
 }
 
-val minecraftGameVersion = "1.8.9"
+val minecraftGameVersion: String = "1.8.9"
+val minecraftVersionTag: String = "1.8"
 
 dependencies {
     labyProcessor()
@@ -29,8 +30,14 @@ mixin {
     version(minecraftGameVersion)
 }
 
-tasks.compileJava {
-    sourceCompatibility = JavaVersion.VERSION_1_8.toString()
-    targetCompatibility = JavaVersion.VERSION_1_8.toString()
+intellij {
+    minorMinecraftVersion(minecraftVersionTag)
+    val javaVersion = project.findProperty("net.labymod.runconfig-v1_8-java-version")
+
+    if(javaVersion != null) {
+        run {
+            javaVersion(javaVersion as String)
+        }
+    }
 }
 

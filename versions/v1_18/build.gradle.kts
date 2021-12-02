@@ -2,9 +2,15 @@ plugins {
     id("org.spongepowered.gradle.vanilla")
     id("net.labymod.gradle.mixin")
 }
-val minecraftGameVersion = "1.18-pre5"
+val minecraftGameVersion = "1.18"
+val minecraftVersionTag: String = "1.18"
 
 version = "1.0.0"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_18
+    targetCompatibility = JavaVersion.VERSION_18
+}
 
 minecraft {
     version(minecraftGameVersion)
@@ -32,4 +38,15 @@ mixin {
     packageName("org.example.addons.v1_18.mixins")
 
     version(minecraftGameVersion)
+}
+
+intellij {
+    minorMinecraftVersion(minecraftVersionTag)
+    val javaVersion = project.findProperty("net.labymod.runconfig-v1_18-java-version")
+
+    if(javaVersion != null) {
+        run {
+            javaVersion(javaVersion as String)
+        }
+    }
 }
