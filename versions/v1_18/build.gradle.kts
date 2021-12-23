@@ -1,7 +1,11 @@
+version = "0.1.0"
+
+
 plugins {
     id("org.spongepowered.gradle.vanilla")
-    id("net.labymod.gradle.mixin")
+    id("net.labymod.gradle.volt")
 }
+
 val minecraftGameVersion = "1.18"
 val minecraftVersionTag: String = "1.18"
 
@@ -26,19 +30,23 @@ minecraft {
 }
 
 dependencies {
+    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT")
     labyProcessor()
     labyApi("v1_18")
     api(project(":core"))
 }
 
-mixin {
-    compatibilityLevel("JAVA_17")
-    minVersion("0.8.2")
+volt {
+    mixin {
+        compatibilityLevel = "JAVA_17"
+        minVersion = "0.8.2"
+    }
 
     packageName("org.example.addons.v1_18.mixins")
 
-    version(minecraftGameVersion)
+    version = minecraftGameVersion
 }
+
 
 intellij {
     minorMinecraftVersion(minecraftVersionTag)
