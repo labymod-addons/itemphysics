@@ -1,11 +1,7 @@
-version = "0.1.0"
-
-
 plugins {
     id("org.spongepowered.gradle.vanilla")
     id("net.labymod.gradle.volt")
 }
-
 val minecraftGameVersion = "1.18"
 val minecraftVersionTag: String = "1.18"
 
@@ -30,7 +26,6 @@ minecraft {
 }
 
 dependencies {
-    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT")
     labyProcessor()
     labyApi("v1_18")
     api(project(":core"))
@@ -42,11 +37,9 @@ volt {
         minVersion = "0.8.2"
     }
 
-    packageName("org.example.addons.v1_18.mixins")
-
+    packageName("onet.labymod.addons.itemphysic.v1_17.mixins")
     version = minecraftGameVersion
 }
-
 
 intellij {
     minorMinecraftVersion(minecraftVersionTag)

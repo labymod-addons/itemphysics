@@ -27,12 +27,8 @@ buildscript {
     }
 
     dependencies {
-        classpath("net.labymod.gradle", "addon", "0.1.34")
+        classpath("net.labymod.gradle", "addon", "0.1.33")
     }
-}
-
-plugins {
-    id("java-library")
 }
 
 group = "org.example"
@@ -40,7 +36,6 @@ version = "1.0.0"
 
 plugins.apply("net.labymod.gradle.addon")
 
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 
 subprojects {
     plugins.apply("java-library")
@@ -53,24 +48,17 @@ subprojects {
     }
 }
 
-createReleaseJar {
-    // Exclude a project from the release jar generation process
-    exclude(project(":versions"))
-
-    // You can also exclude version implementation if your addon
-    // does not require version implementation
-    //
-    // exclude(project(":v1_8"))
-    // exclude(project(":v1_17"))
-    // exclude(project(":v1_18"))
-}
-
 addon {
     addonInfo {
-        id("example")
-        displayName("Example Addon")
-        author("Example Author")
+        id("itemphysic")
+        displayName("Item Physic")
+        author("Pascal Helmerich")
         version(System.getenv().getOrDefault("VERSION", "0.0.0"))
+    }
+
+    dev{
+        releaseChannel = "local"
+        commitReference = "unknown"
     }
 
     internalRelease()
