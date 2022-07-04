@@ -27,7 +27,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("net.labymod.gradle", "addon", "0.1.33")
+        classpath("net.labymod.gradle", "addon", "0.2.28")
     }
 }
 
@@ -50,16 +50,14 @@ subprojects {
 
 addon {
     addonInfo {
-        id("itemphysic")
-        displayName("Item Physic")
-        author("Pascal Helmerich")
+        namespace("itemphysics")
+        displayName("ItemPhysics")
+        author("LabyMedia GmbH")
         version(System.getenv().getOrDefault("VERSION", "0.0.0"))
     }
 
     dev{
-        releaseChannel = "local"
+        releaseChannel = "improvement-addon-api"
         commitReference = "unknown"
     }
-
-    internalRelease()
 }

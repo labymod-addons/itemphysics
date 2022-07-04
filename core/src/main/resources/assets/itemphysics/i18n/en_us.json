@@ -1,0 +1,13 @@
+{
+  "settings": {
+    "itemphysics": {
+      "name": "ItemPhysics",
+      "enabled": {
+        "name": "Enabled"
+      },
+      "rotationSpeed": {
+        "name": "Rotation Speed"
+      }
+    }
+  }
+}

@@ -3,7 +3,9 @@ package net.labymod.addons.itemphysic.v1_8.mixins;
 import net.labymod.addons.itemphysic.core.ItemPhysicAddon;
 import net.labymod.addons.itemphysic.core.configuration.DefaultItemPhysicConfiguration;
 import net.labymod.api.client.render.matrix.Stack;
+import net.labymod.api.inject.LabyGuice;
 import net.labymod.core.main.LabyMod;
+import net.labymod.v1_8.client.render.matrix.MatrixStack;
 import net.labymod.v1_8.client.render.matrix.VersionedStackProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -53,7 +55,7 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
       float partialTicks, CallbackInfo callbackInfo) {
 
     if (this.configuration == null) {
-      this.configuration = LabyMod.getInstance().getInjected(ItemPhysicAddon.class)
+      this.configuration = LabyGuice.getInstance(ItemPhysicAddon.class)
           .getItemPhysicConfiguration();
       this.shadowSize = 0;
     }
@@ -86,7 +88,8 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
     RenderHelper.enableStandardItemLighting();
     GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
-    Stack stack = Stack.create(new VersionedStackProvider());
+
+    Stack stack = VersionedStackProvider.createStack(new MatrixStack());
     stack.push();
 
     stack.translate((float) x, (float) y, (float) z);
