@@ -12,8 +12,8 @@ public class ItemPhysicsConfiguration extends Config {
   @SwitchSetting
   private boolean enabled = true;
 
-  @SliderSetting(min = 1, max = 3)
-  private float rotationSpeed = 1;
+  @SliderSetting(min = 1, max = 10)
+  private float rotationSpeed = 5;
 
   public boolean isEnabled() {
     return this.enabled;

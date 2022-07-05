@@ -31,7 +31,7 @@ volt {
         minVersion = "0.6.6"
     }
 
-    packageName("org.example.addon.v1_8.mixins")
+    packageName("net.labymod.addons.itemphysics.v1_8.mixins")
 
     version = minecraftGameVersion
 }

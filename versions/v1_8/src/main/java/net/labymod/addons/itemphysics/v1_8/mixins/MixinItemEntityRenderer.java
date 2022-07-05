@@ -1,10 +1,10 @@
 package net.labymod.addons.itemphysics.v1_8.mixins;
 
+import java.util.Random;
 import net.labymod.addons.itemphysics.ItemPhysics;
 import net.labymod.addons.itemphysics.ItemPhysicsConfiguration;
 import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.inject.LabyGuice;
-import net.labymod.core.main.LabyMod;
 import net.labymod.v1_8.client.render.matrix.MatrixStack;
 import net.labymod.v1_8.client.render.matrix.VersionedStackProvider;
 import net.minecraft.client.Minecraft;
@@ -28,8 +28,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Random;
 
 @Mixin(RenderEntityItem.class)
 public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
