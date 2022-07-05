@@ -31,11 +31,16 @@ buildscript {
     }
 }
 
+plugins {
+    id("java-library")
+}
+
 group = "org.example"
 version = "1.0.0"
 
 plugins.apply("net.labymod.gradle.addon")
 
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 
 subprojects {
     plugins.apply("java-library")
