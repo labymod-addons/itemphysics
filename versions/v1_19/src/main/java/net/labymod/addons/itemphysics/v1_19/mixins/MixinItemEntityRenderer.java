@@ -1,7 +1,6 @@
-package net.labymod.addons.itemphysics.v1_17.mixins;
+package net.labymod.addons.itemphysics.v1_19.mixins;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.labymod.addons.itemphysics.ItemPhysics;
 import net.labymod.addons.itemphysics.ItemPhysicsConfiguration;
 import net.labymod.api.client.render.matrix.Stack;
@@ -15,6 +14,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -28,7 +28,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import java.util.Random;
 
 @Mixin(ItemEntityRenderer.class)
@@ -38,7 +37,7 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
 
   @Shadow
   @Final
-  private Random random;
+  private RandomSource random;
 
   @Shadow
   @Final

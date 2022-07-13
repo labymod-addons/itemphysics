@@ -74,13 +74,7 @@ intellij {
 }
 
 tasks {
-    renameApiMixin {
-        relocate("net.labymod.v1_17.", "net.labymod.v1_18.")
-    }
-
     collectNatives {
         into("${project.gradle.gradleUserHomeDir}/caches/VanillaGradle/v2/natives/${minecraftGameVersion}/")
     }
 }
-
-tasks.getByName("jar").finalizedBy("renameApiMixin")

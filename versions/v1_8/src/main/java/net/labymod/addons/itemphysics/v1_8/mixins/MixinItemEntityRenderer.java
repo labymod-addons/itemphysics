@@ -83,7 +83,7 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
     RenderHelper.enableStandardItemLighting();
     GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
-    Stack stack = VersionedStackProvider.createStack(new MatrixStack());
+    Stack stack = Stack.createEmpty();
     stack.push();
 
     stack.translate((float) x, (float) y, (float) z);

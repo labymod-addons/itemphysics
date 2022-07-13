@@ -44,16 +44,10 @@ volt {
         minVersion = "0.8.2"
     }
 
-    packageName("net.labymod.addons.itemphysics.v1_17.mixins")
-    packageName("net.labymod.addons.itemphysics.v1_18.mixins")
     packageName("net.labymod.addons.itemphysics.v1_19.mixins")
-
-    inheritFrom("v1_17")
-    inheritFrom("v1_18")
 
     version = minecraftGameVersion
 }
-
 
 intellij {
     minorMinecraftVersion(minecraftVersionTag)
