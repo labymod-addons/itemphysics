@@ -10,12 +10,10 @@ publish :
     - export PUBLIC_RELEASE_BUILD="true" || 1
     - export PUBLIC_RELEASE_BUILD_TOKEN="${LABYMOD_RELEASE_INTERN_TOKEN}" || exit 1
     - export BEARER_TOKEN="${LABYMOD_BEARER_TOKEN}" || exit 1
-    - sh gradlew build --full-stacktrace
-    - sh gradlew createReleaseJar --full-stacktrace
-    - cp build/libs/release-* addon.jar
+    - sh gradlew remapJar --full-stacktrace
   only :
     - web
   artifacts :
     paths :
-      - addon.jar
+      - build/libs/*.jar
   when : on_success
