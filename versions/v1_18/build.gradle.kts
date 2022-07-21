@@ -46,9 +46,6 @@ volt {
 
 val inheritv117 = sourceSets.create("inherit-v1_17") {
     java.srcDirs(project.files("../v1_17/src/main/java"))
-    java {
-        exclude("net/labymod/v1_17/client/render/matrix/VersionedStackProvider.java")
-    }
 }
 
 sourceSets.getByName("main") {
