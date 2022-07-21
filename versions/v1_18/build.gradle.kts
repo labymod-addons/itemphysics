@@ -77,4 +77,8 @@ tasks {
     collectNatives {
         into("${project.gradle.gradleUserHomeDir}/caches/VanillaGradle/v2/natives/${minecraftGameVersion}/")
     }
+
+    renameApiMixin {
+        relocate("net.labymod.addons.itemphysics.v1_17.", "net.labymod.addons.itemphysics.v1_18.")
+    }
 }
