@@ -59,7 +59,7 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
 
     ItemStack itemStack = itemEntity.getEntityItem();
 
-    if (!this.configuration.isEnabled() || itemStack.getItem() == null) {
+    if (!this.configuration.enabled().get() || itemStack.getItem() == null) {
       return;
     }
 
@@ -71,7 +71,7 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
 
     float rotation =
         (((itemEntity.getAge() + partialTicks) / 20.0F + itemEntity.getEyeHeight()) / 10)
-            * this.configuration.getRotationSpeed();
+            * this.configuration.rotationSpeed().get();
 
     this.bindTexture(TextureMap.locationBlocksTexture);
     this.getRenderManager().renderEngine.getTexture(TextureMap.locationBlocksTexture)

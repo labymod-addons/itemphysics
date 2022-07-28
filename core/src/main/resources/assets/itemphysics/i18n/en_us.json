@@ -1,6 +1,6 @@
 {
-  "settings": {
-    "itemphysics": {
+  "itemphysics": {
+    "settings": {
       "name": "ItemPhysics",
       "enabled": {
         "name": "Enabled"

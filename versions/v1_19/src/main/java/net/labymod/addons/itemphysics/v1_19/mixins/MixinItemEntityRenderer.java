@@ -62,7 +62,7 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
 
     ItemStack itemStack = itemEntity.getItem();
 
-    if (!this.configuration.isEnabled() || itemStack.isEmpty()) {
+    if (!this.configuration.enabled().get() || itemStack.isEmpty()) {
       return;
     }
 
@@ -78,7 +78,7 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
 
     float rotation =
         (((itemEntity.getAge() + partialTicks) / 20.0F + itemEntity.getBbHeight()) / 10)
-            * this.configuration.getRotationSpeed();
+            * this.configuration.rotationSpeed().get();
 
     stack.rotateRadians((float) Math.PI / 2, 1, 0, 0);
     stack.rotateRadians(itemEntity.getYRot(), 0, 0, 1);
