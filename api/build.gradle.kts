@@ -1,5 +1,3 @@
-version = "0.1.0"
-
 plugins {
     id("java-library")
 }
@@ -9,6 +7,7 @@ repositories {
 }
 
 dependencies {
+    labyProcessor("processor")
     labyApi("api")
 }
 

@@ -16,13 +16,21 @@
 
 package net.labymod.addons.itemphysics;
 
-import com.google.inject.Singleton;
 import net.labymod.api.addon.LabyAddon;
-import net.labymod.api.models.addon.annotation.AddonListener;
+import net.labymod.api.models.addon.annotation.AddonMain;
 
-@Singleton
-@AddonListener
+@AddonMain
 public class ItemPhysics extends LabyAddon<ItemPhysicsConfiguration> {
+
+  private static ItemPhysics instance;
+
+  public ItemPhysics() {
+    instance = this;
+  }
+
+  public static ItemPhysics get() {
+    return instance;
+  }
 
   @Override
   protected void enable() {
