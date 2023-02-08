@@ -89,6 +89,7 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
 
     Stack stack = Stack.create(poseStack);
     stack.push();
+    System.out.println(itemEntity.getBbHeight());
 
     float rotation =
         (((itemEntity.getAge() + partialTicks) / 20.0F + itemEntity.getBbHeight()) / 10)

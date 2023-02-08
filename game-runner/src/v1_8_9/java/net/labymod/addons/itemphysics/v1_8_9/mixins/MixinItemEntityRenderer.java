@@ -19,6 +19,9 @@ package net.labymod.addons.itemphysics.v1_8_9.mixins;
 import java.util.Random;
 import net.labymod.addons.itemphysics.ItemPhysics;
 import net.labymod.addons.itemphysics.ItemPhysicsConfiguration;
+import net.labymod.addons.itemphysics.event.ItemEntityRenderEvent;
+import net.labymod.api.client.entity.Entity;
+import net.labymod.api.client.render.matrix.Stack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -32,6 +35,7 @@ import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import org.jetbrains.annotations.NotNull;
@@ -67,6 +71,10 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
   public void render(@NotNull EntityItem itemEntity, double x, double y, double z, float yaw,
       float partialTicks, CallbackInfo callbackInfo) {
 
+//    ItemEntityRenderEvent event = new ItemEntityRenderEvent((Entity) itemEntity,
+//        Stack.createEmpty(), x, y, z, yaw, partialTicks);
+//    ItemPhysics.get().labyAPI().eventBus().fire(event);
+
     if (this.configuration == null) {
       this.configuration = ItemPhysics.get().configuration();
       this.shadowSize = 0;
@@ -83,11 +91,10 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
     Item item = itemStack.getItem();
     int seed = Item.getIdFromItem(item) + itemStack.getItemDamage();
     this.field_177079_e.setSeed(seed);
-
     AxisAlignedBB entityBoundingBox = itemEntity.getEntityBoundingBox();
-    float rotation =
-        (((itemEntity.getAge() + partialTicks) / 20.0F + itemEntity.height) / 20)
-            * this.configuration.rotationSpeed().get();
+    System.out.println(entityBoundingBox.maxY - entityBoundingBox.minY);
+    float rotation = (((itemEntity.getAge()) / 20.0F + (float) (entityBoundingBox.maxY
+        - entityBoundingBox.minY))) * this.configuration.rotationSpeed().get();
 
     this.bindTexture(TextureMap.locationBlocksTexture);
     this.getRenderManager().renderEngine.getTexture(TextureMap.locationBlocksTexture)
@@ -102,7 +109,9 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
     GlStateManager.pushMatrix();
 
     GlStateManager.translate((float) x, (float) y, (float) z);
-    GlStateManager.scale(0.5f, 0.5f, 0.5f);
+    if (item instanceof ItemBlock) {
+      GlStateManager.scale(0.5f, 0.5f, 0.5f);
+    }
 
     GlStateManager.rotate((float) (Math.PI / 2) * RAD_TO_DEG, 1, 0, 0);
     GlStateManager.rotate(itemEntity.rotationYaw * RAD_TO_DEG, 0, 0, 1);
@@ -160,7 +169,6 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
 
     GlStateManager.popMatrix();
 
-    GlStateManager.disableRescaleNormal();
     GlStateManager.disableBlend();
     this.bindTexture(TextureMap.locationBlocksTexture);
     this.getRenderManager().renderEngine.getTexture(TextureMap.locationBlocksTexture)
@@ -175,5 +183,4 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
     }
     itemEntity.rotationPitch = itemEntity.rotationPitch + rotation * 2;
   }
-
 }

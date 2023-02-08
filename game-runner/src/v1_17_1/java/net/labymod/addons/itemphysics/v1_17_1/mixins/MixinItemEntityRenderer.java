@@ -75,7 +75,7 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
     }
 
     ItemStack itemStack = itemEntity.getItem();
-
+    System.out.println(itemEntity.getThrower());
     if (!this.configuration.enabled().get() || itemStack.isEmpty()) {
       return;
     }

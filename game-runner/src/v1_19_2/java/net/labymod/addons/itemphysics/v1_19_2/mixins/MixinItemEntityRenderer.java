@@ -91,7 +91,7 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
     stack.push();
 
     float rotation =
-        (((itemEntity.getAge() + partialTicks) / 20.0F + itemEntity.getBbHeight()) / 10)
+        (((itemEntity.getAge()) / 20.0F + itemEntity.getBbHeight()) / 10)
             * this.configuration.rotationSpeed().get();
 
     stack.rotateRadians((float) Math.PI / 2, 1, 0, 0);
