@@ -14,24 +14,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.labymod.addons.itemphysics.v1_19_2.mixins;
+package net.labymod.addons.itemphysics.v1_16_5.mixins;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
+import java.util.Random;
 import net.labymod.addons.itemphysics.ItemPhysics;
 import net.labymod.addons.itemphysics.ItemPhysicsConfiguration;
-import net.labymod.addons.itemphysics.v1_19_2.client.VersionedEntityAccessor;
+import net.labymod.addons.itemphysics.v1_16_5.client.VersionedEntityAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.ItemEntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
@@ -59,10 +59,10 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
 
   @Shadow
   @Final
-  private RandomSource random;
+  private Random random;
 
-  protected MixinItemEntityRenderer(Context context) {
-    super(context);
+  protected MixinItemEntityRenderer(EntityRenderDispatcher entityRenderDispatcher) {
+    super(entityRenderDispatcher);
   }
 
   @Shadow
@@ -73,7 +73,7 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
       at = @At("HEAD"),
       cancellable = true
   )
-  private void itemPhysics$modifyDroppedItemRendering(
+  public void itemPhysics$modifyDroppedItemRendering(
       ItemEntity itemEntity,
       float f,
       float g,
@@ -88,7 +88,6 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
     }
 
     ItemStack itemStack = itemEntity.getItem();
-
     if (!this.itemPhysics$configuration.enabled().get() || itemStack.isEmpty()) {
       return;
     }
@@ -115,11 +114,11 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
         itemStack.isEmpty() ? 187 : Item.getId(itemStack.getItem()) + itemStack.getDamageValue()
     );
 
-    BakedModel bakedModel = this.itemRenderer.getModel(itemStack, entity.level, null,
-        entity.getId());
+    BakedModel bakedModel = this.itemRenderer.getModel(itemStack, entity.level, null);
     boolean isThreeDimensional = bakedModel.isGui3d();
+
     pose.mulPose(Vector3f.XP.rotation((float) Math.PI / 2));
-    pose.mulPose(Vector3f.ZP.rotation(entity.getYRot()));
+    pose.mulPose(Vector3f.ZP.rotation(entity.getYHeadRot()));
 
     Minecraft minecraft = Minecraft.getInstance();
     boolean applyEffects =
@@ -147,23 +146,23 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
           }
 
           if (fluid != null) {
-            rotateBy /= (1 + this.itemPhysics$getViscosity(fluid, entity.getLevel()));
+            rotateBy /= (1 + this.itemPhysics$getViscosity(fluid, entity.level));
           }
 
-          entity.setXRot(entity.getXRot() + rotateBy);
+          entity.xRot += rotateBy;
         }
       } else if (!Double.isNaN(entity.getX()) && !Double.isNaN(entity.getY()) && !Double.isNaN(
           entity.getZ())) {
         if (entity.isOnGround()) {
-          entity.setXRot(0);
+          entity.xRot = rotateBy;
         } else {
           rotateBy *= 2;
           Fluid fluid = this.itemPhysics$getFluid(entity);
           if (fluid != null) {
-            rotateBy /= (1 + this.itemPhysics$getViscosity(fluid, entity.getLevel()));
+            rotateBy /= (1 + this.itemPhysics$getViscosity(fluid, entity.level));
           }
 
-          entity.setXRot(entity.getXRot() + rotateBy);
+          entity.xRot += rotateBy;
         }
       }
 
@@ -182,7 +181,7 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
         pose.translate(0, height, 0);
       }
 
-      pose.mulPose(Vector3f.YP.rotation(entity.getXRot()));
+      pose.mulPose(Vector3f.YP.rotation(entity.xRot));
       if (isThreeDimensional) {
         pose.translate(0, -height, 0);
       }
@@ -230,7 +229,7 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
 
     FluidState state = item.level.getFluidState(pos);
     Fluid fluid = state.getType();
-    if (fluid.getTickDelay(item.getLevel()) == 0) {
+    if (fluid.getTickDelay(item.level) == 0) {
       return null;
     }
 
@@ -239,7 +238,6 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
     }
 
     double filled = state.getHeight(item.level, pos);
-
     if (d0 - pos.getY() - 0.2 <= filled) {
       return fluid;
     }

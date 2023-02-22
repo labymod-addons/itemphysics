@@ -14,7 +14,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.labymod.addons.itemphysics.v1_8_9.mixins;
+package net.labymod.addons.itemphysics.v1_12_2.mixins;
 
 import java.util.Random;
 import net.labymod.addons.itemphysics.ItemPhysics;
@@ -23,17 +23,17 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
-import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
@@ -50,7 +50,8 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
   private ItemPhysicsConfiguration itemPhysics$configuration;
 
   @Shadow
-  private Random field_177079_e;
+  @Final
+  private Random random;
 
   @Final
   @Shadow
@@ -61,7 +62,7 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
   }
 
   @Shadow
-  protected abstract int func_177078_a(ItemStack itemStack);
+  protected abstract int getModelCount(ItemStack itemStack);
 
   @Inject(
       method = "doRender(Lnet/minecraft/entity/item/EntityItem;DDDFF)V",
@@ -82,7 +83,7 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
       this.shadowSize = 0;
     }
 
-    ItemStack itemStack = itemEntity.getEntityItem();
+    ItemStack itemStack = itemEntity.getItem();
     if (!this.itemPhysics$configuration.enabled().get() || itemStack.getItem() == null) {
       return;
     }
@@ -103,14 +104,14 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
       return false;
     }
 
-    ItemStack itemStack = entity.getEntityItem();
+    ItemStack itemStack = entity.getItem();
     if (itemStack == null) {
       return false;
     }
 
-    boolean empty = itemStack.getItem() == null || itemStack.stackSize <= 0;
-    this.field_177079_e.setSeed(
-        empty ? 187 : Item.getIdFromItem(itemStack.getItem()) + itemStack.getMetadata()
+    this.random.setSeed(
+        itemStack.isEmpty() ? 187
+            : Item.getIdFromItem(itemStack.getItem()) + itemStack.getMetadata()
     );
 
     boolean flag = false;
@@ -125,13 +126,19 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
     GlStateManager.enableBlend();
     RenderHelper.enableStandardItemLighting();
     GlStateManager.tryBlendFuncSeparate(
-        GL11.GL_SRC_ALPHA,
-        GL11.GL_ONE_MINUS_SRC_ALPHA,
-        GL11.GL_ONE,
-        GL11.GL_ZERO
+        GlStateManager.SourceFactor.SRC_ALPHA,
+        GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+        GlStateManager.SourceFactor.ONE,
+        GlStateManager.DestFactor.ZERO
     );
+
     GlStateManager.pushMatrix();
-    IBakedModel bakedModel = this.itemRenderer.getItemModelMesher().getItemModel(itemStack);
+    IBakedModel bakedModel = this.itemRenderer.getItemModelWithOverrides(
+        itemStack,
+        entity.world,
+        null
+    );
+
     boolean isThreeDimensional = bakedModel.isGui3d();
     float rotateBy =
         ItemPhysics.getRotation() * 40 * this.itemPhysics$configuration.rotationSpeed().get();
@@ -199,7 +206,7 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
     GL11.glRotatef(entity.rotationYaw, 0.0F, 1.0F, 0.0F);
     GL11.glRotatef(entity.rotationPitch + 90.0F, 1.0F, 0.0F, 0.0F);
 
-    int modelCount = this.func_177078_a(itemStack);
+    int modelCount = this.getModelCount(itemStack);
     ItemCameraTransforms camera = bakedModel.getItemCameraTransforms();
     float f = camera.ground.scale.x;
     float f1 = camera.ground.scale.y;
@@ -212,14 +219,19 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
       GlStateManager.translate(f3, f4, f5);
     }
 
+    if (this.renderOutlines) {
+      GlStateManager.enableColorMaterial();
+      GlStateManager.enableOutlineMode(this.getTeamColor(entity));
+    }
+
     for (int k = 0; k < modelCount; ++k) {
       if (isThreeDimensional) {
         GlStateManager.pushMatrix();
 
         if (k > 0) {
-          float f7 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
-          float f9 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
-          float f6 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+          float f7 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F;
+          float f9 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F;
+          float f6 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F;
           GlStateManager.translate(f7, f9, f6);
         }
 
@@ -229,10 +241,9 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
         GlStateManager.popMatrix();
       } else {
         GlStateManager.pushMatrix();
-
         if (k > 0) {
-          float f8 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
-          float f10 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
+          float f8 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
+          float f10 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
           GlStateManager.translate(f8, f10, 0.0F);
         }
 
@@ -242,6 +253,11 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
         GlStateManager.popMatrix();
         GlStateManager.translate(0.0F * f, 0.0F * f1, 0.09375F * f2);
       }
+    }
+
+    if (this.renderOutlines) {
+      GlStateManager.disableOutlineMode();
+      GlStateManager.disableColorMaterial();
     }
 
     GlStateManager.popMatrix();

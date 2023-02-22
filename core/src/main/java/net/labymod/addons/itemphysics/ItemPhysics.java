@@ -16,6 +16,7 @@
 
 package net.labymod.addons.itemphysics;
 
+import net.labymod.addons.itemphysics.listener.GameRenderListener;
 import net.labymod.api.addon.LabyAddon;
 import net.labymod.api.models.addon.annotation.AddonMain;
 
@@ -23,22 +24,32 @@ import net.labymod.api.models.addon.annotation.AddonMain;
 public class ItemPhysics extends LabyAddon<ItemPhysicsConfiguration> {
 
   private static ItemPhysics instance;
+  private long lastRenderTime;
 
   public ItemPhysics() {
-    instance = this;
+    ItemPhysics.instance = this;
   }
 
   public static ItemPhysics get() {
     return instance;
   }
 
+  public static float getRotation() {
+    return (System.nanoTime() - ItemPhysics.get().lastRenderTime) / 100000000F;
+  }
+
   @Override
   protected void enable() {
     this.registerSettingCategory();
+    this.registerListener(new GameRenderListener(this));
   }
 
   @Override
   protected Class<ItemPhysicsConfiguration> configurationClass() {
     return ItemPhysicsConfiguration.class;
+  }
+
+  public void updateLastRenderTime() {
+    this.lastRenderTime = System.nanoTime();
   }
 }

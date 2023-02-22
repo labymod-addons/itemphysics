@@ -17,9 +17,11 @@
 package net.labymod.addons.itemphysics.v1_19_3.mixins;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.labymod.addons.itemphysics.ItemPhysics;
 import net.labymod.addons.itemphysics.ItemPhysicsConfiguration;
-import net.labymod.api.client.render.matrix.Stack;
+import net.labymod.addons.itemphysics.v1_19_3.client.VersionedEntityAccessor;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -30,13 +32,15 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -47,128 +51,178 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ItemEntityRenderer.class)
 public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity> {
 
-  private ItemPhysicsConfiguration configuration;
-
-  @Shadow
-  @Final
-  private RandomSource random;
+  private ItemPhysicsConfiguration itemPhysics$configuration;
 
   @Shadow
   @Final
   private ItemRenderer itemRenderer;
 
-  private MixinItemEntityRenderer(Context param0) {
-    super(param0);
+  @Shadow
+  @Final
+  private RandomSource random;
+
+  protected MixinItemEntityRenderer(Context context) {
+    super(context);
   }
 
   @Shadow
-  public abstract int getRenderAmount(ItemStack param0);
+  protected abstract int getRenderAmount(ItemStack itemStack);
 
-  @Inject(at = @At("HEAD"), method = "render", cancellable = true)
-  public void render(@NotNull ItemEntity itemEntity, float param1, float partialTicks,
-      PoseStack poseStack, MultiBufferSource source, int i,
-      CallbackInfo callbackInfo) {
-
-    if (this.configuration == null) {
-      this.configuration = ItemPhysics.get().configuration();
+  @Inject(
+      method = "Lnet/minecraft/client/renderer/entity/ItemEntityRenderer;render(Lnet/minecraft/world/entity/item/ItemEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+      at = @At("HEAD"),
+      cancellable = true
+  )
+  private void itemPhysics$modifyDroppedItemRendering(
+      ItemEntity itemEntity,
+      float f,
+      float g,
+      PoseStack poseStack,
+      MultiBufferSource multiBufferSource,
+      int i,
+      CallbackInfo ci
+  ) {
+    if (this.itemPhysics$configuration == null) {
+      this.itemPhysics$configuration = ItemPhysics.get().configuration();
       this.shadowRadius = 0;
     }
 
     ItemStack itemStack = itemEntity.getItem();
-
-    if (!this.configuration.enabled().get() || itemStack.isEmpty()) {
+    if (!this.itemPhysics$configuration.enabled().get() || itemStack.isEmpty()) {
       return;
     }
 
-    int renderCount = this.getRenderAmount(itemStack);
+    if (this.itemPhysics$render(itemEntity, poseStack, multiBufferSource, i)) {
+      super.render(itemEntity, f, g, poseStack, multiBufferSource, i);
+      ci.cancel();
+    }
+  }
 
-    Item item = itemStack.getItem();
-    int seed = Item.getId(item) + itemStack.getDamageValue();
-    this.random.setSeed(seed);
-    BakedModel bakedModel = this.itemRenderer.getModel(itemStack, itemEntity.level, null, seed);
-
-    Stack stack = Stack.create(poseStack);
-    stack.push();
-    System.out.println(itemEntity.getBbHeight());
-
-    float rotation =
-        (((itemEntity.getAge() + partialTicks) / 20.0F + itemEntity.getBbHeight()) / 10)
-            * this.configuration.rotationSpeed().get();
-
-    stack.rotateRadians((float) Math.PI / 2, 1, 0, 0);
-    stack.rotateRadians(itemEntity.getYRot(), 0, 0, 1);
-
-    this.rotateX(itemEntity, rotation);
-    if (bakedModel.isGui3d()) {
-      stack.translate(0, -0.2f, -0.08f);
-    } else if (itemEntity.level.getBlockState(itemEntity.blockPosition()).getBlock() == Blocks.SNOW
-        || itemEntity.level.getBlockState(itemEntity.blockPosition().below()).getBlock()
-        == Blocks.SOUL_SAND) {
-      stack.translate(0, 0.0f, -0.14f);
-    } else {
-      stack.translate(0, 0, -0.04f);
+  private boolean itemPhysics$render(
+      ItemEntity entity,
+      PoseStack pose,
+      MultiBufferSource buffer,
+      int packedLight
+  ) {
+    if (entity.getAge() == 0) {
+      return false;
     }
 
-    float height = 0.2f;
-    if (bakedModel.isGui3d()) {
-      stack.translate(0, height, 0);
-    }
-    stack.rotateRadians(itemEntity.getXRot(), 0, 1, 0);
-    if (bakedModel.isGui3d()) {
-      poseStack.translate(0, -height, 0);
-    }
+    pose.pushPose();
+    ItemStack itemStack = entity.getItem();
+    this.random.setSeed(
+        itemStack.isEmpty() ? 187 : Item.getId(itemStack.getItem()) + itemStack.getDamageValue()
+    );
 
-    if (!bakedModel.isGui3d()) {
-      float x = -0.0F * (renderCount - 1) * 0.5F;
-      float y = -0.0F * (renderCount - 1) * 0.5F;
-      float z = -0.09375F * (renderCount - 1) * 0.5F;
-      stack.translate(x, y, z);
-    }
-    for (int k = 0; k < renderCount; ++k) {
-      stack.push();
-      if (k > 0) {
-        if (bakedModel.isGui3d()) {
-          float f11 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F;
-          float f13 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F;
-          float f10 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F;
-          stack.translate(f11, f13, f10);
+    BakedModel bakedModel = this.itemRenderer.getModel(itemStack, entity.level, null,
+        entity.getId());
+    boolean isThreeDimensional = bakedModel.isGui3d();
+    pose.mulPose(Axis.XP.rotation((float) Math.PI / 2));
+    pose.mulPose(Axis.ZP.rotation(entity.getYRot()));
+
+    Minecraft minecraft = Minecraft.getInstance();
+    boolean applyEffects =
+        entity.getAge() != 0 && (isThreeDimensional || minecraft.options != null);
+
+    //Handle Rotations
+    if (applyEffects) {
+      float rotateBy =
+          ItemPhysics.getRotation() * this.itemPhysics$configuration.rotationSpeed().get();
+      if (minecraft.isPaused()) {
+        rotateBy = 0;
+      }
+
+      Vec3 motionMultiplier = this.itemPhysics$getStuckSpeedMultiplier(entity);
+      if (motionMultiplier != null && motionMultiplier.lengthSqr() > 0) {
+        rotateBy *= motionMultiplier.x * 0.2;
+      }
+
+      if (isThreeDimensional) {
+        if (!entity.isOnGround()) {
+          rotateBy *= 2;
+          Fluid fluid = this.itemPhysics$getFluid(entity);
+          if (fluid == null) {
+            fluid = this.itemPhysics$getFluid(entity, true);
+          }
+
+          if (fluid != null) {
+            rotateBy /= (1 + this.itemPhysics$getViscosity(fluid, entity.getLevel()));
+          }
+
+          entity.setXRot(entity.getXRot() + rotateBy);
+        }
+      } else if (!Double.isNaN(entity.getX()) && !Double.isNaN(entity.getY()) && !Double.isNaN(
+          entity.getZ())) {
+        if (entity.isOnGround()) {
+          entity.setXRot(0);
+        } else {
+          rotateBy *= 2;
+          Fluid fluid = this.itemPhysics$getFluid(entity);
+          if (fluid != null) {
+            rotateBy /= (1 + this.itemPhysics$getViscosity(fluid, entity.getLevel()));
+          }
+
+          entity.setXRot(entity.getXRot() + rotateBy);
         }
       }
 
-      this.itemRenderer.render(itemStack, ItemTransforms.TransformType.GROUND, false, poseStack,
-          source, i, OverlayTexture.NO_OVERLAY, bakedModel);
-      stack.pop();
-      if (!bakedModel.isGui3d()) {
-        stack.translate(0.0f, 0.0f, 0.09375F);
+      if (isThreeDimensional) {
+        pose.translate(0, -0.2, -0.08);
+      } else if (
+          entity.level.getBlockState(entity.blockPosition()).getBlock() == Blocks.SNOW
+              || entity.level.getBlockState(entity.blockPosition().below()).getBlock()
+              == Blocks.SOUL_SAND) {
+        pose.translate(0, 0.0, -0.14);
+      } else {
+        pose.translate(0, 0, -0.04);
+      }
+
+      double height = 0.2;
+      if (isThreeDimensional) {
+        pose.translate(0, height, 0);
+      }
+
+      pose.mulPose(Axis.YP.rotation(entity.getXRot()));
+      if (isThreeDimensional) {
+        pose.translate(0, -height, 0);
       }
     }
 
-    stack.pop();
-
-    callbackInfo.cancel();
-  }
-
-  private void rotateX(ItemEntity itemEntity, float rotation) {
-    if (itemEntity.isOnGround()) {
-      return;
-    }
-    Fluid fluid = this.getFluid(itemEntity);
-    if (fluid == null) {
-      fluid = this.getFluid(itemEntity, true);
-    }
-    if (fluid != null) {
-      rotation *= 0.25;
+    int modelAmount = this.getRenderAmount(itemStack);
+    if (!isThreeDimensional) {
+      float f7 = -0.0F * (modelAmount - 1) * 0.5F;
+      float f8 = -0.0F * (modelAmount - 1) * 0.5F;
+      float f9 = -0.09375F * (modelAmount - 1) * 0.5F;
+      pose.translate(f7, f8, f9);
     }
 
-    itemEntity.setXRot(itemEntity.getXRot() + rotation * 2);
+    for (int k = 0; k < modelAmount; ++k) {
+      pose.pushPose();
+      if (k > 0 && isThreeDimensional) {
+        float f11 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F;
+        float f13 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F;
+        float f10 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F;
+        pose.translate(f11, f13, f10);
+      }
+
+      this.itemRenderer.render(itemStack, ItemTransforms.TransformType.GROUND, false, pose, buffer,
+          packedLight, OverlayTexture.NO_OVERLAY, bakedModel);
+      pose.popPose();
+      if (!isThreeDimensional) {
+        pose.translate(0.0, 0.0, 0.09375F);
+      }
+    }
+
+    pose.popPose();
+    return true;
   }
 
-  private Fluid getFluid(ItemEntity item) {
-    return this.getFluid(item, false);
+  private Fluid itemPhysics$getFluid(ItemEntity item) {
+    return this.itemPhysics$getFluid(item, false);
   }
 
-  private Fluid getFluid(ItemEntity item, boolean below) {
-    double y = item.position().y;
+  private Fluid itemPhysics$getFluid(ItemEntity item, boolean below) {
+    double d0 = item.position().y;
     BlockPos pos = item.blockPosition();
     if (below) {
       pos = pos.below();
@@ -176,16 +230,31 @@ public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity>
 
     FluidState state = item.level.getFluidState(pos);
     Fluid fluid = state.getType();
+    if (fluid.getTickDelay(item.getLevel()) == 0) {
+      return null;
+    }
 
     if (below) {
       return fluid;
     }
 
     double filled = state.getHeight(item.level, pos);
-
-    if (y - pos.getY() - 0.2 <= filled) {
+    if (d0 - pos.getY() - 0.2 <= filled) {
       return fluid;
     }
+
     return null;
+  }
+
+  private Vec3 itemPhysics$getStuckSpeedMultiplier(Entity entity) {
+    return ((VersionedEntityAccessor) entity).getStuckSpeedMultiplier();
+  }
+
+  private float itemPhysics$getViscosity(Fluid fluid, Level level) {
+    if (fluid == null) {
+      return 0;
+    }
+
+    return fluid.getTickDelay(level);
   }
 }
