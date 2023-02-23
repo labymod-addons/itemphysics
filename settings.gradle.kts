@@ -1,4 +1,4 @@
-rootProject.name = "itemphysics-addon"
+rootProject.name = "itemphysics"
 
 pluginManagement {
     val labyGradlePluginVersion = "0.3.15"
