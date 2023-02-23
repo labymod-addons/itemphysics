@@ -41,6 +41,7 @@ public class ItemPhysics extends LabyAddon<ItemPhysicsConfiguration> {
   @Override
   protected void enable() {
     this.registerSettingCategory();
+
     this.registerListener(new GameRenderListener(this));
   }
 
