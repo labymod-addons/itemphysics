@@ -235,8 +235,7 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
           GlStateManager.translate(f7, f9, f6);
         }
 
-        camera.applyTransform(TransformType.NONE);
-        GlStateManager.scale(0.3, 0.3, 0.3);
+        camera.applyTransform(TransformType.GROUND);
         this.itemRenderer.renderItem(itemStack, bakedModel);
         GlStateManager.popMatrix();
       } else {
@@ -247,8 +246,7 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
           GlStateManager.translate(f8, f10, 0.0F);
         }
 
-        camera.applyTransform(TransformType.NONE);
-        GlStateManager.scale(0.5, 0.5, 0.5);
+        camera.applyTransform(TransformType.GROUND);
         this.itemRenderer.renderItem(itemStack, bakedModel);
         GlStateManager.popMatrix();
         GlStateManager.translate(0.0F * f, 0.0F * f1, 0.09375F * f2);

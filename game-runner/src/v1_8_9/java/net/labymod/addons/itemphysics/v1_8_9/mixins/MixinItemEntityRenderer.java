@@ -215,32 +215,23 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
     for (int k = 0; k < modelCount; ++k) {
       if (isThreeDimensional) {
         GlStateManager.pushMatrix();
-
         if (k > 0) {
-          float f7 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
-          float f9 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
-          float f6 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
-          GlStateManager.translate(f7, f9, f6);
+          float translateX = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+          float translateY = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+          float translateZ = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+          GlStateManager.translate(translateX, translateY, translateZ);
         }
 
-        camera.applyTransform(TransformType.NONE);
-        GlStateManager.scale(0.3, 0.3, 0.3);
+        GlStateManager.scale(0.5F, 0.5F, 0.5F);
+        camera.applyTransform(TransformType.GROUND);
         this.itemRenderer.renderItem(itemStack, bakedModel);
         GlStateManager.popMatrix();
       } else {
         GlStateManager.pushMatrix();
-
-        if (k > 0) {
-          float f8 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
-          float f10 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
-          GlStateManager.translate(f8, f10, 0.0F);
-        }
-
-        camera.applyTransform(TransformType.NONE);
-        GlStateManager.scale(0.5, 0.5, 0.5);
+        camera.applyTransform(TransformType.GROUND);
         this.itemRenderer.renderItem(itemStack, bakedModel);
         GlStateManager.popMatrix();
-        GlStateManager.translate(0.0F * f, 0.0F * f1, 0.09375F * f2);
+        GlStateManager.translate(0.0F, 0.0F, 0.046875F * camera.ground.scale.z);
       }
     }
 
