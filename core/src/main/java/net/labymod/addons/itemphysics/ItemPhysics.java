@@ -35,7 +35,7 @@ public class ItemPhysics extends LabyAddon<ItemPhysicsConfiguration> {
   }
 
   public static float getRotation() {
-    return (System.nanoTime() - ItemPhysics.get().lastRenderTime) / 100000000F;
+    return (System.nanoTime() - ItemPhysics.get().lastRenderTime) / 100_000_000F;
   }
 
   @Override
