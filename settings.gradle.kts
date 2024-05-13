@@ -1,7 +1,7 @@
 rootProject.name = "itemphysics"
 
 pluginManagement {
-    val labyGradlePluginVersion = "0.3.28"
+    val labyGradlePluginVersion = "0.3.50"
     plugins {
         id("net.labymod.gradle") version (labyGradlePluginVersion)
     }
