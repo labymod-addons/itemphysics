@@ -1,6 +1,23 @@
+/*
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.labymod.addons.itemphysics.v1_21_3.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import javax.inject.Singleton;
 import net.labymod.addons.itemphysics.bridge.BakedModel;
 import net.labymod.addons.itemphysics.bridge.ItemEntity;
 import net.labymod.addons.itemphysics.bridge.VersionBridge;
@@ -10,7 +27,6 @@ import net.labymod.api.client.world.item.Item;
 import net.labymod.api.client.world.item.ItemStack;
 import net.labymod.api.models.Implements;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -20,7 +36,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import javax.inject.Singleton;
 
 @Singleton
 @Implements(VersionBridge.class)

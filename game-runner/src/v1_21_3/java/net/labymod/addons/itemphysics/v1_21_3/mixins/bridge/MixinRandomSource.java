@@ -14,23 +14,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.labymod.addons.itemphysics.bridge;
+package net.labymod.addons.itemphysics.v1_21_3.mixins.bridge;
 
-public interface ItemEntity {
+import net.labymod.addons.itemphysics.bridge.RandomSource;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-  double itemPhysics$getPosX();
+@Mixin(net.minecraft.util.RandomSource.class)
+public interface MixinRandomSource extends RandomSource {
 
-  double itemPhysics$getPosY();
+  @Shadow
+  void setSeed(long var1);
 
-  double itemPhysics$getPosZ();
+  @Shadow
+  float nextFloat();
 
-  int itemPhysics$getAge();
+  @Override
+  default void itemPhysics$setSeed(long seed) {
+    this.setSeed(seed);
+  }
 
-  float itemPhysics$getYRot();
-
-  boolean itemPhysics$isOnGround();
-
-  float itemPhysics$getXRot();
-
-  void itemPhysics$setXRot(float xRot);
+  @Override
+  default float itemPhysics$nextFloat() {
+    return this.nextFloat();
+  }
 }

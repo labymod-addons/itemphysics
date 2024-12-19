@@ -14,23 +14,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.labymod.addons.itemphysics.bridge;
+package net.labymod.addons.itemphysics.v1_21_3.mixins.bridge;
 
-public interface ItemEntity {
+import net.labymod.addons.itemphysics.bridge.BakedModel;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-  double itemPhysics$getPosX();
+@Mixin(net.minecraft.client.resources.model.BakedModel.class)
+public interface MixinBakedModel extends BakedModel {
 
-  double itemPhysics$getPosY();
+  @Shadow
+  boolean isGui3d();
 
-  double itemPhysics$getPosZ();
-
-  int itemPhysics$getAge();
-
-  float itemPhysics$getYRot();
-
-  boolean itemPhysics$isOnGround();
-
-  float itemPhysics$getXRot();
-
-  void itemPhysics$setXRot(float xRot);
+  @Override
+  default boolean itemPhysics$isGui3D() {
+    return this.isGui3d();
+  }
 }

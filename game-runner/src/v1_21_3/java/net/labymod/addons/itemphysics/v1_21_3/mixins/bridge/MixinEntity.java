@@ -14,23 +14,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.labymod.addons.itemphysics.bridge;
+package net.labymod.addons.itemphysics.v1_21_3.mixins.bridge;
 
-public interface ItemEntity {
+import net.labymod.addons.itemphysics.bridge.EntityMotion;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-  double itemPhysics$getPosX();
+@Mixin(Entity.class)
+public class MixinEntity implements EntityMotion {
 
-  double itemPhysics$getPosY();
+  @Shadow
+  protected Vec3 stuckSpeedMultiplier;
 
-  double itemPhysics$getPosZ();
+  @Override
+  public boolean itemPhysics$hasStuckSpeedMultiplier() {
+    return this.stuckSpeedMultiplier != null;
+  }
 
-  int itemPhysics$getAge();
+  @Override
+  public double itemPhysics$lengthSqr() {
+    return this.stuckSpeedMultiplier.lengthSqr();
+  }
 
-  float itemPhysics$getYRot();
-
-  boolean itemPhysics$isOnGround();
-
-  float itemPhysics$getXRot();
-
-  void itemPhysics$setXRot(float xRot);
+  @Override
+  public double itemPhysics$getStuckSpeedMultiplierX() {
+    return this.stuckSpeedMultiplier.x;
+  }
 }
