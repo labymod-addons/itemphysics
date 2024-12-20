@@ -97,6 +97,10 @@ public class VersionedVersionBridge implements VersionBridge {
       int packedLightCoords,
       BakedModel bakedModel
   ) {
+    if (bakedModel.itemPhysics$isGui3D()) {
+      GlStateManager.scale(0.5F, 0.5F, 0.5F);
+    }
+
     var itemRenderer = Minecraft.getMinecraft().getRenderItem();
     ((IBakedModel) bakedModel).getItemCameraTransforms().applyTransform(TransformType.GROUND);
     itemRenderer.renderItem(
