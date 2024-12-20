@@ -20,13 +20,20 @@ import net.labymod.addons.itemphysics.util.FloatOptional;
 import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.client.world.item.ItemStack;
 import net.labymod.api.reference.annotation.Referenceable;
+import net.labymod.api.util.math.vector.FloatVector3;
 
 @Referenceable
 public interface VersionBridge {
 
+  FloatVector3 DEFAULT_GROUND_SCALE = new FloatVector3(1.0F, 1.0F, 1.0F);
+
   int getItemId(ItemStack itemStack);
 
   boolean isGamePaused();
+
+  default void preRenderItem(ItemEntity entity, boolean renderOutlines) {
+
+  }
 
   void renderItem(
       ItemStack itemStack,
@@ -36,9 +43,17 @@ public interface VersionBridge {
       BakedModel bakedModel
   );
 
+  default void postRenderItem(ItemEntity entity, boolean renderOutlines) {
+
+  }
+
   boolean isSpecialBlock(ItemEntity entity);
 
   boolean hasOptions();
 
   FloatOptional getFluidViscosity(ItemEntity entity, boolean withBelow);
+
+  default FloatVector3 getGroundScale(BakedModel model) {
+    return DEFAULT_GROUND_SCALE;
+  }
 }

@@ -26,6 +26,7 @@ import net.labymod.addons.itemphysics.util.FloatOptional;
 import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.client.world.item.ItemStack;
 import net.labymod.api.reference.annotation.Referenceable;
+import net.labymod.api.util.math.vector.FloatVector3;
 
 @Referenceable
 @Singleton
@@ -49,10 +50,39 @@ public class ItemPhysicsRenderer {
       RandomSource random,
       int packedLightCoords
   ) {
-    if (age == 0) {
+    return this.render(
+        stack,
+        bufferSource,
+        itemEntity,
+        age,
+        itemStack,
+        model,
+        random,
+        packedLightCoords,
+        false
+    );
+  }
+
+  public boolean render(
+      Stack stack,
+      Object bufferSource,
+      ItemEntity itemEntity,
+      float age,
+      ItemStack itemStack,
+      BakedModel model,
+      RandomSource random,
+      int packedLightCoords,
+      boolean renderOutlines
+  ) {
+    if (!ItemPhysics.get().configuration().enabled().get()) {
       return false;
     }
 
+    if (age == 0 || model == null) {
+      return false;
+    }
+
+    this.bridge.preRenderItem(itemEntity, renderOutlines);
     stack.push();
     random.itemPhysics$setSeed(
         itemStack.isAir() ?
@@ -91,9 +121,11 @@ public class ItemPhysicsRenderer {
     }
 
     if (!gui3D) {
-      float offsetX = -0.0F * (modelCount - 1) * 0.5F;
-      float offsetY = -0.0F * (modelCount - 1) * 0.5F;
-      float offsetZ = -0.09375F * (modelCount - 1) * 0.5F;
+      FloatVector3 groundScale = this.bridge.getGroundScale(model);
+
+      float offsetX = -0.0F * (modelCount - 1) * 0.5F * groundScale.getX();
+      float offsetY = -0.0F * (modelCount - 1) * 0.5F * groundScale.getY();
+      float offsetZ = -0.09375F * (modelCount - 1) * 0.5F * groundScale.getZ();
       stack.translate(offsetX, offsetY, offsetZ);
     }
 
@@ -118,6 +150,7 @@ public class ItemPhysicsRenderer {
     }
 
     stack.pop();
+    this.bridge.postRenderItem(itemEntity, renderOutlines);
     return true;
   }
 
