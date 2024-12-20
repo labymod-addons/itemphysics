@@ -14,30 +14,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.labymod.addons.itemphysics.util;
+package net.labymod.addons.itemphysics.v1_21_4.mixins.bridge;
 
-import net.labymod.addons.itemphysics.bridge.RandomSource;
-import java.util.Random;
+import net.labymod.addons.itemphysics.bridge.BakedModel;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-public class JavaRandom implements RandomSource {
+@Mixin(net.minecraft.client.resources.model.BakedModel.class)
+public interface MixinBakedModel extends BakedModel {
 
-  private final Random random;
-
-  private JavaRandom(Random random) {
-    this.random = random;
-  }
-
-  public static JavaRandom of(Random random) {
-    return new JavaRandom(random);
-  }
+  @Shadow
+  boolean isGui3d();
 
   @Override
-  public void itemPhysics$setSeed(long seed) {
-    this.random.setSeed(seed);
-  }
-
-  @Override
-  public float itemPhysics$nextFloat() {
-    return this.random.nextFloat();
+  default boolean itemPhysics$isGui3D() {
+    return this.isGui3d();
   }
 }

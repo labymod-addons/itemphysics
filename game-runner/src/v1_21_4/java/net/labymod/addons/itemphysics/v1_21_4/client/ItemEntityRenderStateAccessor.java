@@ -14,30 +14,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.labymod.addons.itemphysics.util;
+package net.labymod.addons.itemphysics.v1_21_4.client;
 
-import net.labymod.addons.itemphysics.bridge.RandomSource;
-import java.util.Random;
+import net.minecraft.world.entity.item.ItemEntity;
 
-public class JavaRandom implements RandomSource {
+public interface ItemEntityRenderStateAccessor {
 
-  private final Random random;
+  ItemEntity getItemEntity();
 
-  private JavaRandom(Random random) {
-    this.random = random;
-  }
-
-  public static JavaRandom of(Random random) {
-    return new JavaRandom(random);
-  }
-
-  @Override
-  public void itemPhysics$setSeed(long seed) {
-    this.random.setSeed(seed);
-  }
-
-  @Override
-  public float itemPhysics$nextFloat() {
-    return this.random.nextFloat();
-  }
+  void setItemEntity(ItemEntity itemEntity);
 }

@@ -14,6 +14,9 @@ labyMod {
 
     minecraft {
         registerVersion(versions.toTypedArray()) {
+
+            accessWidener.set(file("./game-runner/src/${this.sourceSetName}/resources/itemphysics-${versionId}.accesswidener"))
+
             runs {
                 getByName("client") {
                     // When the property is set to true, you can log in with a Minecraft account
