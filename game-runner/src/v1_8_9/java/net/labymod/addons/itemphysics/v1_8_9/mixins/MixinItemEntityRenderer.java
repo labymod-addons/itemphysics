@@ -70,7 +70,7 @@ public abstract class MixinItemEntityRenderer extends Render<EntityItem> {
     var bakedModel = this.itemRenderer.getItemModelMesher()
         .getItemModel(itemEntity.getEntityItem());
     GlStateManager.pushMatrix();
-    GlStateManager.translate(x, y, z);
+    GlStateManager.translate(x, y + 0.15F, z);
 
     boolean rendered = renderer.render(
         VersionedStackProvider.DEFAULT_STACK,

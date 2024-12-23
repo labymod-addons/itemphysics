@@ -25,6 +25,7 @@ import net.labymod.addons.itemphysics.bridge.VersionBridge;
 import net.labymod.addons.itemphysics.util.FloatOptional;
 import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.client.world.item.ItemStack;
+import net.labymod.api.loader.MinecraftVersions;
 import net.labymod.api.reference.annotation.Referenceable;
 import net.labymod.api.util.math.vector.FloatVector3;
 
@@ -32,8 +33,10 @@ import net.labymod.api.util.math.vector.FloatVector3;
 @Singleton
 public class ItemPhysicsRenderer {
 
+  private static final boolean MODERN_PHYSIC_TRANSLATE = MinecraftVersions.V1_12_2.orNewer();
   private static final long AIR_SEED = 187;
   private static final float HALF_PI = (float) Math.PI / 2.0F;
+  private static final float ITEM_HEIGHT_OFFSET = 0.2F;
   private final VersionBridge bridge;
 
   public ItemPhysicsRenderer(VersionBridge bridge) {
@@ -188,6 +191,17 @@ public class ItemPhysicsRenderer {
       }
     }
 
+    this.preItemTranslate(stack, itemEntity, gui3D);
+    stack.rotateRadians(itemEntity.itemPhysics$getXRot(), 1, 0, 0);
+    this.postItemTranslate(stack, itemEntity, gui3D);
+  }
+
+
+  private void preItemTranslate(Stack stack, ItemEntity itemEntity, boolean gui3D) {
+    if (!MODERN_PHYSIC_TRANSLATE) {
+      return;
+    }
+
     if (gui3D) {
       stack.translate(0.0F, -0.2F, -0.08F);
     } else if (this.bridge.isSpecialBlock(itemEntity)) {
@@ -196,15 +210,18 @@ public class ItemPhysicsRenderer {
       stack.translate(0.0F, 0.0F, -0.04F);
     }
 
-    float height = 0.2F;
     if (gui3D) {
-      stack.translate(0.0F, height, 0.0F);
+      stack.translate(0.0F, ITEM_HEIGHT_OFFSET, 0.0F);
+    }
+  }
+
+  private void postItemTranslate(Stack stack, ItemEntity itemEntity, boolean gui3D) {
+    if (!MODERN_PHYSIC_TRANSLATE) {
+      return;
     }
 
-    stack.rotateRadians(itemEntity.itemPhysics$getXRot(), 1, 0, 0);
-
     if (gui3D) {
-      stack.translate(0.0F, -height, 0.0F);
+      stack.translate(0.0F, -ITEM_HEIGHT_OFFSET, 0.0F);
     }
   }
 
