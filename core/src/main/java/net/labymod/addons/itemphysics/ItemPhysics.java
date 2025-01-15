@@ -16,13 +16,19 @@
 
 package net.labymod.addons.itemphysics;
 
+import net.labymod.addons.itemphysics.core.generated.DefaultReferenceStorage;
 import net.labymod.addons.itemphysics.listener.GameRenderListener;
 import net.labymod.api.addon.LabyAddon;
+import net.labymod.api.loader.MinecraftVersions;
 import net.labymod.api.models.addon.annotation.AddonMain;
+import net.labymod.api.util.time.TimeUtil;
 
 @AddonMain
 public class ItemPhysics extends LabyAddon<ItemPhysicsConfiguration> {
 
+  private static final boolean USE_LEGACY_SPEED = MinecraftVersions.V1_12_2.orOlder();
+  private static final float LEGACY_SPEED = 200_000_000.0F;
+  private static final float MODERN_SPEED = 100_000_000.0F;
   private static ItemPhysics instance;
   private long lastRenderTime;
 
@@ -35,7 +41,7 @@ public class ItemPhysics extends LabyAddon<ItemPhysicsConfiguration> {
   }
 
   public static float getRotation() {
-    return (System.nanoTime() - ItemPhysics.get().lastRenderTime) / 100_000_000F;
+    return (TimeUtil.getNanoTime() - ItemPhysics.get().lastRenderTime) / (USE_LEGACY_SPEED ? LEGACY_SPEED : MODERN_SPEED);
   }
 
   @Override
@@ -50,7 +56,11 @@ public class ItemPhysics extends LabyAddon<ItemPhysicsConfiguration> {
     return ItemPhysicsConfiguration.class;
   }
 
+  public DefaultReferenceStorage referenceStorage() {
+    return this.referenceStorageAccessor();
+  }
+
   public void updateLastRenderTime() {
-    this.lastRenderTime = System.nanoTime();
+    this.lastRenderTime = TimeUtil.getNanoTime();
   }
 }
