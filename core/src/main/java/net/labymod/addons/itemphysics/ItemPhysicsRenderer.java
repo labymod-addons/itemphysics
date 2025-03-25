@@ -94,7 +94,7 @@ public class ItemPhysicsRenderer {
     );
 
     int modelCount = this.getModelCount(itemStack);
-    boolean gui3D = model.itemPhysics$isGui3D();
+    boolean gui3D = true; model.itemPhysics$isGui3D();
 
     float rotatedBy = ItemPhysics.getRotation() * ItemPhysics.get()
         .configuration()
