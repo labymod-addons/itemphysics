@@ -27,6 +27,7 @@ import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.client.world.item.Item;
 import net.labymod.api.client.world.item.ItemStack;
 import net.labymod.api.models.Implements;
+import net.labymod.api.util.CastUtil;
 import net.labymod.api.util.function.Functional;
 import net.labymod.api.util.math.vector.FloatVector3;
 import net.minecraft.block.Block;
@@ -104,10 +105,21 @@ public class VersionedVersionBridge implements VersionBridge {
       int packedLightCoords,
       BakedModel bakedModel
   ) {
+    // Fix IDEA-19370
+    if (itemStack == null) {
+      return;
+    }
+
+    net.minecraft.item.ItemStack mcItemStack = CastUtil.cast(itemStack);
+    net.minecraft.item.Item item = mcItemStack.getItem();
+    if (item == null) {
+      return;
+    }
+
     RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
     ((IBakedModel) bakedModel).getItemCameraTransforms().applyTransform(TransformType.GROUND);
     itemRenderer.renderItem(
-        (net.minecraft.item.ItemStack) (Object) itemStack,
+        mcItemStack,
         (IBakedModel) bakedModel
     );
   }
