@@ -1,13 +1,1 @@
-{
-    "itemphysics": {
-        "settings": {
-            "name": "",
-            "enabled": {
-                "name": ""
-            },
-            "rotationSpeed": {
-                "name": ""
-            }
-        }
-    }
-}
+{}
