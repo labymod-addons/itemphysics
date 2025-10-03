@@ -1,1 +1,9 @@
-{}
+{
+    "itemphysics": {
+        "settings": {
+            "rotationSpeed": {
+                "name": "Velocidade de Rotação"
+            }
+        }
+    }
+}
