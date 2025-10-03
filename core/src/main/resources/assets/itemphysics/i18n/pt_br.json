@@ -3,6 +3,9 @@
         "settings": {
             "rotationSpeed": {
                 "name": "Velocidade de Rotação"
+            },
+            "enabled": {
+                "name": "Ativado"
             }
         }
     }
