@@ -1,1 +1,10 @@
-{}
+{
+    "itemphysics": {
+        "settings": {
+            "name": "GenstandsFysik",
+            "enabled": {
+                "name": "Aktiveret"
+            }
+        }
+    }
+}
