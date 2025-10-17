@@ -4,6 +4,9 @@
             "name": "GenstandsFysik",
             "enabled": {
                 "name": "Aktiveret"
+            },
+            "rotationSpeed": {
+                "name": "Rotationshastighed"
             }
         }
     }
