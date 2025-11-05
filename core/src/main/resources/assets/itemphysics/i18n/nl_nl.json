@@ -1,1 +1,13 @@
-{}
+{
+    "itemphysics": {
+        "settings": {
+            "name": "Itemfysica",
+            "enabled": {
+                "name": "Ingeschakeld"
+            },
+            "rotationSpeed": {
+                "name": "Rotatiesnelheid"
+            }
+        }
+    }
+}
