@@ -1,1 +1,13 @@
-{}
+{
+    "itemphysics": {
+        "settings": {
+            "name": "Eşya Fizikleri",
+            "enabled": {
+                "name": "Aktif"
+            },
+            "rotationSpeed": {
+                "name": "Dönüş Hızı"
+            }
+        }
+    }
+}
