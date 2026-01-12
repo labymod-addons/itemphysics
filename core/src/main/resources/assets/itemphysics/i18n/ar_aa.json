@@ -1,1 +1,7 @@
-{}
+{
+    "itemphysics": {
+        "settings": {
+            "name": "فيزياء العناصر"
+        }
+    }
+}
