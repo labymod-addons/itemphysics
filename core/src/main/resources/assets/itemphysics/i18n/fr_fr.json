@@ -4,6 +4,9 @@
             "name": "Physique des objets",
             "enabled": {
                 "name": "Activé"
+            },
+            "rotationSpeed": {
+                "name": "Vitesse de rotation"
             }
         }
     }
