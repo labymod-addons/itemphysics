@@ -1,1 +1,10 @@
-{}
+{
+    "itemphysics": {
+        "settings": {
+            "name": "Physique des objets",
+            "enabled": {
+                "name": "Activé"
+            }
+        }
+    }
+}
