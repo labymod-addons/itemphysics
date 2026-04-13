@@ -1,7 +1,13 @@
 {
     "itemphysics": {
         "settings": {
-            "name": "فيزياء العناصر"
+            "name": "فيزياء العناصر",
+            "enabled": {
+                "name": "مفعّل"
+            },
+            "rotationSpeed": {
+                "name": "سرعة الدوران"
+            }
         }
     }
 }
