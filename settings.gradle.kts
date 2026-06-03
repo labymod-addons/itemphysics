@@ -1,7 +1,7 @@
 rootProject.name = "itemphysics"
 
 pluginManagement {
-    val labyGradlePluginVersion = "0.5.9"
+    val labyGradlePluginVersion = "0.8.0"
     buildscript {
         repositories {
             maven("https://dist.labymod.net/api/v1/maven/release/")
